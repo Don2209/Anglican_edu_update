@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 $v = $result['values'];
 $err = $result['errors'];
-$val = static fn (string $k): string => e($v[$k] ?? '');
+$val = static function (string $k) use ($v): string { return e($v[$k] ?? ''); };
 $selectedTopic = $v['topic'] ?? 'general';
 
 /** aria attributes + message for a field with an error */

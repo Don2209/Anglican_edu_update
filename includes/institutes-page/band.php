@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-$names = array_map(static fn ($s) => preg_replace('/,.*$/', '', $s['name']), $schools);
+$names = array_map(static function ($s) { return preg_replace('/,.*$/', '', $s['name']); }, $schools);
 ?>
 <div class="iband" aria-hidden="true" data-parallax>
     <div class="iband__ribbon iband__ribbon--a">

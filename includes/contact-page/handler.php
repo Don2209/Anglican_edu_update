@@ -39,7 +39,9 @@ function contact_csrf_token(): string
  */
 function contact_handle(array $post, array $schools): array
 {
-    $field = static fn (string $key, int $max): string => mb_substr(trim((string) ($post[$key] ?? '')), 0, $max);
+    $field = static function (string $key, int $max) use ($post): string {
+        return mb_substr(trim((string) ($post[$key] ?? '')), 0, $max);
+    };
 
     $values = [
         'name'    => $field('name', 100),
@@ -126,7 +128,9 @@ function contact_mail(array $values, array $schools): void
     }
 
     // Header values are single-line: strip CR/LF to prevent header injection
-    $clean = static fn (string $v): string => str_replace(["\r", "\n"], ' ', $v);
+    $clean = static function (string $v): string {
+        return str_replace(["\r", "\n"], ' ', $v);
+    };
 
     $body = "Name: {$values['name']}\nEmail: {$values['email']}\nPhone: {$values['phone']}\nTopic: {$topic}\n"
           . ($schoolName ? "School: {$schoolName}\n" : '') . "\n{$values['message']}\n";

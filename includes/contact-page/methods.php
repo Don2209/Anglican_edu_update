@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 $mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode(SITE_ADDRESS[0] . ', ' . SITE_ADDRESS[1]);
-$socials = array_filter(SOCIAL_LINKS, static fn ($l) => $l['url'] !== '');
+$socials = array_filter(SOCIAL_LINKS, static function ($l) { return $l['url'] !== ''; });
 ?>
 <section class="methods" aria-labelledby="methods-title">
     <h2 class="visually-hidden" id="methods-title">Ways to reach us</h2>

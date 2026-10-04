@@ -9,7 +9,7 @@
 
 declare(strict_types=1);
 
-$maxLearners = max(array_filter(array_map(static fn ($s) => $factNumber($s, 'Learners'), $schools)) ?: [1]);
+$maxLearners = max(array_filter(array_map(static function ($s) use ($factNumber) { return $factNumber($s, 'Learners'); }, $schools)) ?: [1]);
 ?>
 <section class="glance" id="glance" aria-labelledby="glance-title">
     <div class="glance__inner">

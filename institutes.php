@@ -17,9 +17,9 @@ $factNumber = static function (array $school, string $key): ?int {
     return (int) str_replace(',', '', $m[0]);
 };
 
-$learners = array_filter(array_map(static fn ($s) => $factNumber($s, 'Learners'), $schools));
-$teachers = array_filter(array_map(static fn ($s) => $factNumber($s, 'Staff'), $schools));
-$founded  = array_filter(array_map(static fn ($s) => $factNumber($s, 'Founded'), $schools));
+$learners = array_filter(array_map(static function ($s) use ($factNumber) { return $factNumber($s, 'Learners'); }, $schools));
+$teachers = array_filter(array_map(static function ($s) use ($factNumber) { return $factNumber($s, 'Staff'); }, $schools));
+$founded  = array_filter(array_map(static function ($s) use ($factNumber) { return $factNumber($s, 'Founded'); }, $schools));
 
 $stats = [
     'schools'  => count($schools),

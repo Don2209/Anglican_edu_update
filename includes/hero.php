@@ -24,7 +24,7 @@ $srcset = static function (string $image) use ($heroDir): string {
     return e(implode(', ', $sources));
 };
 
-$socials = array_filter(SOCIAL_LINKS, static fn (array $link): bool => $link['url'] !== '');
+$socials = array_filter(SOCIAL_LINKS, static function (array $link): bool { return $link['url'] !== ''; });
 ?>
 <section class="hero" id="hero" aria-roledescription="carousel" aria-label="Highlights from our schools" data-hero data-interval="5000">
 
