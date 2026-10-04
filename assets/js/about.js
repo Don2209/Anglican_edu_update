@@ -1,7 +1,7 @@
 /**
  * About page: chapter tabs (with the saltire wipe), shield navigator,
- * schools filter, horizontal admissions process, subject explorer, draggable
- * strip and the projects scroll story.
+ * schools filter, admissions journey, subject explorer, curved photo reel
+ * and the auto-playing projects showcase.
  * Everything is optional enhancement: without JS all chapters are shown.
  */
 (function () {
@@ -93,7 +93,9 @@
             if (target) {
                 var details = target.querySelector('details');
                 if (details) details.open = true;
-                var offset = 150;
+                // clear the fixed header and the sticky chapter tabs
+                var tabsBar = bar.getBoundingClientRect();
+                var offset = Math.max(150, tabsBar.height + 120);
                 window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'auto' });
             } else if (options.scroll !== false) {
                 scrollToChapters();
@@ -264,20 +266,50 @@
 
     var processEl = document.querySelector('[data-process]');
     if (processEl) {
-        var track = processEl.querySelector('[data-process-track]');
+        var lane = processEl.querySelector('[data-process-track]');
         var fill = processEl.querySelector('[data-process-fill]');
+        var processSteps = Array.prototype.slice.call(processEl.querySelectorAll('[data-process-step]'));
+        var readout = processEl.querySelector('[data-process-readout]');
+        var readoutNum = processEl.querySelector('[data-process-current]');
         var wide = window.matchMedia('(min-width: 961px)');
+        var activeStep = -1;
+
+        readout.hidden = false;
+
+        function setActiveStep(index) {
+            if (index === activeStep) return;
+            activeStep = index;
+            processSteps.forEach(function (step, i) {
+                step.classList.toggle('is-active', i === index);
+                step.classList.toggle('is-passed', i < index);
+            });
+            readoutNum.textContent = (index < 9 ? '0' : '') + (index + 1);
+        }
 
         var updateProcess = onFrame(function () {
-            if (!wide.matches || reduceMotion || processEl.offsetParent === null) {
-                track.style.transform = '';
-                return;
-            }
+            if (processEl.offsetParent === null) return;   // chapter hidden
             var rect = processEl.getBoundingClientRect();
-            var distance = rect.height - window.innerHeight;
-            var p = clamp01(-rect.top / Math.max(distance, 1));
-            var travel = Math.max(track.scrollWidth - window.innerWidth, 0);
-            track.style.transform = 'translate3d(' + (-travel * p).toFixed(1) + 'px, 0, 0)';
+            var vh = window.innerHeight;
+            var p;
+
+            if (wide.matches) {
+                // Pinned: vertical scroll drives the lane sideways
+                p = clamp01(-rect.top / Math.max(rect.height - vh, 1));
+                var travel = Math.max(lane.scrollWidth - window.innerWidth, 0);
+                lane.style.transform = reduceMotion ? '' : 'translate3d(' + (-travel * p).toFixed(1) + 'px, 0, 0)';
+                setActiveStep(Math.min(processSteps.length - 1, Math.round(p * (processSteps.length - 1))));
+            } else {
+                // Vertical timeline: the step crossing the middle of the screen is active
+                lane.style.transform = '';
+                var mid = vh * 0.55;
+                var index = 0;
+                processSteps.forEach(function (step, i) {
+                    if (step.getBoundingClientRect().top < mid) index = i;
+                });
+                setActiveStep(index);
+                var laneRect = lane.getBoundingClientRect();
+                p = clamp01((mid - laneRect.top) / Math.max(laneRect.height, 1));
+            }
             fill.style.setProperty('--progress', p.toFixed(3));
         });
 
@@ -358,59 +390,336 @@
     }
 
     /* =====================================================================
-       Sports: drag-to-scroll photo strip (mouse; touch scrolls natively)
+       Sports: curved 3D photo reel
+       position is a fractional card index; each card is placed on an arc by
+       its distance from it. Drag/swipe with momentum, then snap.
        ===================================================================== */
 
-    var strip = document.querySelector('[data-strip]');
-    if (strip && finePointer) {
-        var stripTrack = strip.querySelector('.strip__track');
-        var startX = 0;
-        var startScroll = 0;
-        var dragging = false;
+    var reel = document.querySelector('[data-reel]');
+    if (reel) {
+        var stage = reel.querySelector('[data-reel-stage]');
+        var cards = Array.prototype.slice.call(reel.querySelectorAll('[data-reel-card]'));
+        var prevBtn = reel.querySelector('[data-reel-prev]');
+        var nextBtn = reel.querySelector('[data-reel-next]');
+        var currentEl = reel.querySelector('[data-reel-current]');
+        var progressEl = reel.querySelector('[data-reel-progress]');
+        var reelStatus = reel.querySelector('[data-reel-status]');
+        var pauseBtn = reel.querySelector('[data-reel-pause]');
+        var last = cards.length - 1;
+        var position = 0;      // where the reel is drawn
+        var target = 0;        // where it is heading
+        var settled = 0;       // last snapped card (for announcements)
+        var raf = null;
 
-        stripTrack.addEventListener('pointerdown', function (event) {
-            if (event.pointerType !== 'mouse') return;
-            dragging = true;
-            startX = event.clientX;
-            startScroll = stripTrack.scrollLeft;
-            strip.classList.add('is-dragging');
-            stripTrack.setPointerCapture(event.pointerId);
-        });
-        stripTrack.addEventListener('pointermove', function (event) {
-            if (dragging) stripTrack.scrollLeft = startScroll - (event.clientX - startX);
-        });
-        ['pointerup', 'pointercancel'].forEach(function (type) {
-            stripTrack.addEventListener(type, function () {
-                dragging = false;
-                strip.classList.remove('is-dragging');
+        reel.querySelector('[data-reel-controls]').hidden = false;
+        reel.querySelector('[data-reel-footer]').hidden = false;
+
+        function spacing() { return cards[0].offsetWidth * (window.innerWidth < 640 ? 0.82 : 0.72); }
+
+        function render() {
+            var gap = spacing();
+            cards.forEach(function (card, i) {
+                var d = i - position;
+                var ad = Math.abs(d);
+                var t = reduceMotion
+                    ? 'translate3d(' + (d * gap * 1.15).toFixed(1) + 'px,0,0)'
+                    : 'translate3d(' + (d * gap).toFixed(1) + 'px,' + (ad * ad * 6).toFixed(1) + 'px,' + (-ad * 160).toFixed(1) + 'px) rotateY(' + (-d * 24).toFixed(2) + 'deg)';
+                card.style.transform = t;
+                card.style.zIndex = String(100 - Math.round(ad * 10));
+                card.style.opacity = String(Math.max(0, 1 - Math.max(ad - 2.2, 0)));
+                card.style.setProperty('--dist', ad.toFixed(3));
+                card.classList.toggle('is-current', ad < 0.5);
+                card.setAttribute('aria-hidden', ad < 0.5 ? 'false' : 'true');
             });
+            var index = Math.round(clampIndex(position));
+            var label = (index < 9 ? '0' : '') + (index + 1);
+            if (currentEl.textContent !== label) currentEl.textContent = label;
+            progressEl.style.setProperty('--progress', (last ? clamp01(position / last) : 1).toFixed(3));
+            prevBtn.disabled = target <= 0;
+            nextBtn.disabled = target >= last;
+        }
+
+        function clampIndex(n) { return Math.min(Math.max(n, 0), last); }
+
+        // Ease position towards target each frame (critically damped feel)
+        function animate() {
+            var diff = target - position;
+            position += diff * (reduceMotion ? 1 : 0.14);
+            if (Math.abs(diff) < 0.001) position = target;
+            render();
+            if (position !== target) {
+                raf = window.requestAnimationFrame(animate);
+            } else {
+                raf = null;
+                if (Math.round(target) !== settled) {
+                    settled = Math.round(target);
+                    reelStatus.textContent = cards[settled].getAttribute('aria-label');
+                }
+            }
+        }
+
+        function goTo(index) {
+            target = clampIndex(Math.round(index));
+            if (!raf) raf = window.requestAnimationFrame(animate);
+        }
+
+        prevBtn.addEventListener('click', function () { goTo(target - 1); });
+        nextBtn.addEventListener('click', function () { goTo(target + 1); });
+
+        stage.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowRight') { goTo(target + 1); event.preventDefault(); }
+            if (event.key === 'ArrowLeft') { goTo(target - 1); event.preventDefault(); }
+            if (event.key === 'Home') { goTo(0); event.preventDefault(); }
+            if (event.key === 'End') { goTo(last); event.preventDefault(); }
         });
+
+        // Drag / swipe with momentum
+        var drag = null;
+        stage.addEventListener('pointerdown', function (event) {
+            if (event.button !== 0) return;
+            drag = { x: event.clientX, y: event.clientY, start: position, lastX: event.clientX, lastT: performance.now(), v: 0, moved: false, id: event.pointerId };
+        });
+        stage.addEventListener('pointermove', function (event) {
+            if (!drag) return;
+            var dx = event.clientX - drag.x;
+            if (!drag.moved) {
+                // decide: sideways drag (ours) or vertical scroll (the browser's)
+                if (Math.abs(dx) < 6) return;
+                if (Math.abs(event.clientY - drag.y) > Math.abs(dx)) { drag = null; return; }
+                drag.moved = true;
+                reel.classList.add('is-dragging');
+                restartTimer();
+                stage.setPointerCapture(drag.id);
+            }
+            var now = performance.now();
+            drag.v = (event.clientX - drag.lastX) / Math.max(now - drag.lastT, 1);
+            drag.lastX = event.clientX;
+            drag.lastT = now;
+            var raw = drag.start - dx / spacing();
+            // rubber-band past the ends
+            if (raw < 0) raw = raw * 0.35;
+            if (raw > last) raw = last + (raw - last) * 0.35;
+            position = target = raw;
+            render();
+        });
+        function endDrag() {
+            if (!drag) return;
+            if (drag.moved) {
+                var fling = -drag.v * 220 / spacing();   // px/ms → cards
+                goTo(position + Math.max(Math.min(fling, 2.5), -2.5));
+                // swallow the click that ends a drag
+                stage.addEventListener('click', function swallow(e) { e.stopPropagation(); e.preventDefault(); }, { capture: true, once: true });
+            }
+            drag = null;
+            reel.classList.remove('is-dragging');
+        }
+        stage.addEventListener('pointerup', endDrag);
+        stage.addEventListener('pointercancel', endDrag);
+
+        // Clicking a side card brings it to the centre
+        cards.forEach(function (card, i) {
+            card.addEventListener('click', function () { if (i !== Math.round(target)) goTo(i); });
+        });
+
+        // Trackpad sideways scroll
+        var wheelLock = 0;
+        stage.addEventListener('wheel', function (event) {
+            if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+            event.preventDefault();
+            var now = performance.now();
+            if (now - wheelLock < 350 || Math.abs(event.deltaX) < 8) return;
+            wheelLock = now;
+            goTo(target + (event.deltaX > 0 ? 1 : -1));
+        }, { passive: false });
+
+        // Re-measure whenever the reel's size changes, including when its
+        // chapter goes from hidden (zero width) to shown
+        if ('ResizeObserver' in window) new ResizeObserver(onFrame(render)).observe(stage);
+        else window.addEventListener('resize', onFrame(render));
+        window.addEventListener('chapter:change', render);
+
+        /* --- Autoplay ------------------------------------------------------
+           Advances every INTERVAL ms and loops. Pauses while hovered, focused,
+           dragged, off screen, in a hidden chapter or background tab, and
+           never runs for reduced motion. The play button shows the countdown. */
+        var INTERVAL = 3500;
+        var userPaused = reduceMotion;
+        var hovering = false;
+        var focused = false;
+        var onScreen = false;
+        var elapsed = 0;
+        var lastTick = 0;
+        var tickRaf = null;
+        var lastTickValue = '';
+
+        function canRun() {
+            return !userPaused && !hovering && !focused && !drag && onScreen && !document.hidden && reel.offsetParent !== null;
+        }
+
+        function tick(now) {
+            if (canRun()) {
+                elapsed += lastTick ? now - lastTick : 0;
+                if (elapsed >= INTERVAL) {
+                    elapsed = 0;
+                    goTo(Math.round(target) >= last ? 0 : target + 1);   // loop back to the start
+                }
+            }
+            lastTick = now;
+            var tickValue = (elapsed / INTERVAL).toFixed(3);
+            if (tickValue !== lastTickValue) {
+                lastTickValue = tickValue;
+                pauseBtn.style.setProperty('--tick', tickValue);
+            }
+            tickRaf = window.requestAnimationFrame(tick);
+        }
+
+        function restartTimer() { elapsed = 0; }
+
+        function setUserPaused(paused) {
+            userPaused = paused;
+            pauseBtn.setAttribute('aria-pressed', String(paused));
+            pauseBtn.querySelector('.visually-hidden').textContent = paused ? 'Play slideshow' : 'Pause slideshow';
+            restartTimer();
+        }
+
+        pauseBtn.addEventListener('click', function () { setUserPaused(!userPaused); });
+        prevBtn.addEventListener('click', restartTimer);
+        nextBtn.addEventListener('click', restartTimer);
+        stage.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') hovering = true; });
+        stage.addEventListener('pointerleave', function () { hovering = false; });
+        stage.addEventListener('focus', function () { focused = true; });
+        stage.addEventListener('blur', function () { focused = false; });
+        stage.addEventListener('touchstart', restartTimer, { passive: true });
+
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (entries) { onScreen = entries[0].isIntersecting; }, { threshold: 0.5 }).observe(stage);
+        } else {
+            onScreen = true;
+        }
+
+        setUserPaused(userPaused);
+        tickRaf = window.requestAnimationFrame(tick);
+        // Start on the second card so the arc is visible on both sides
+        position = target = settled = Math.min(1, last);
+        render();
     }
 
     /* =====================================================================
-       Projects: scroll story
+       Projects: auto-playing showcase
        ===================================================================== */
 
-    var story = document.querySelector('[data-story]');
-    if (story && 'IntersectionObserver' in window) {
-        var steps = story.querySelectorAll('[data-story-step]');
-        var layers = story.querySelectorAll('[data-story-layer]');
-        var dots = story.querySelectorAll('[data-story-dot]');
-        var counter = story.querySelector('[data-story-current]');
+    var showcase = document.querySelector('[data-showcase]');
+    if (showcase) {
+        var scTabs = Array.prototype.slice.call(showcase.querySelectorAll('[data-showcase-tab]'));
+        var scSlides = Array.prototype.slice.call(showcase.querySelectorAll('[data-showcase-slide]'));
+        var scPause = showcase.querySelector('[data-showcase-pause]');
+        var scInterval = parseInt(showcase.getAttribute('data-interval'), 10) || 5000;
+        var scIndex = 0;
+        var scElapsed = 0;
+        var scLast = 0;
+        var scUserPaused = reduceMotion;
+        var scHover = false;
+        var scFocus = false;
+        var scOnScreen = false;
+        var scTickValue = '';
 
-        function activate(index) {
-            steps.forEach(function (s, i) { s.classList.toggle('is-active', i === index); });
-            layers.forEach(function (l, i) { l.classList.toggle('is-active', i === index); });
-            dots.forEach(function (d, i) { d.classList.toggle('is-active', i === index); });
-            counter.textContent = (index < 9 ? '0' : '') + (index + 1);
+        showcase.querySelector('[data-showcase-tabs]').hidden = false;
+        showcase.querySelector('[data-showcase-controls]').hidden = false;
+
+        function scGo(index, focusTab) {
+            scIndex = (index + scSlides.length) % scSlides.length;
+            scElapsed = 0;
+            scSlides.forEach(function (slide, i) {
+                var active = i === scIndex;
+                slide.classList.toggle('is-active', active);
+                slide.toggleAttribute('inert', !active);
+            });
+            scTabs.forEach(function (tab, i) {
+                var active = i === scIndex;
+                tab.setAttribute('aria-selected', String(active));
+                tab.tabIndex = active ? 0 : -1;
+            });
+            var tab = scTabs[scIndex];
+            if (focusTab) tab.focus();
+            // keep the chip in view when the list scrolls sideways (phones)
+            var list = tab.parentElement;
+            if (list.scrollWidth > list.clientWidth) {
+                list.scrollTo({ left: tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2, behavior: reduceMotion ? 'auto' : 'smooth' });
+            }
         }
 
-        var storyObserver = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (entry.isIntersecting) activate(parseInt(entry.target.getAttribute('data-story-step'), 10));
-            });
-        }, { rootMargin: '-45% 0px -45% 0px' });
+        function scRunning() {
+            return !scUserPaused && !scHover && !scFocus && scOnScreen && !document.hidden && showcase.offsetParent !== null;
+        }
 
-        steps.forEach(function (step) { storyObserver.observe(step); });
+        function scTick(now) {
+            if (scRunning()) {
+                scElapsed += scLast ? now - scLast : 0;
+                if (scElapsed >= scInterval) scGo(scIndex + 1);
+            }
+            scLast = now;
+            var value = Math.min(scElapsed / scInterval, 1).toFixed(3);
+            if (value !== scTickValue) {
+                scTickValue = value;
+                scTabs[scIndex].style.setProperty('--tick', value);
+            }
+            window.requestAnimationFrame(scTick);
+        }
+
+        function scSetPaused(paused) {
+            scUserPaused = paused;
+            scPause.setAttribute('aria-pressed', String(paused));
+            scPause.querySelector('.visually-hidden').textContent = paused ? 'Play slideshow' : 'Pause slideshow';
+        }
+
+        scTabs.forEach(function (tab, i) {
+            tab.addEventListener('click', function () { scGo(i); });
+        });
+
+        // ARIA tabs keyboard pattern
+        showcase.querySelector('[data-showcase-tabs]').addEventListener('keydown', function (event) {
+            var keysMap = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
+            if (event.key in keysMap) { event.preventDefault(); scGo(scIndex + keysMap[event.key], true); }
+            if (event.key === 'Home') { event.preventDefault(); scGo(0, true); }
+            if (event.key === 'End') { event.preventDefault(); scGo(scSlides.length - 1, true); }
+        });
+
+        showcase.querySelector('[data-showcase-prev]').addEventListener('click', function () { scGo(scIndex - 1); });
+        showcase.querySelector('[data-showcase-next]').addEventListener('click', function () { scGo(scIndex + 1); });
+        scPause.addEventListener('click', function () { scSetPaused(!scUserPaused); });
+
+        // Pause while someone is looking closely or interacting
+        showcase.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') scHover = true; });
+        showcase.addEventListener('pointerleave', function () { scHover = false; });
+        showcase.addEventListener('focusin', function () { scFocus = true; });
+        showcase.addEventListener('focusout', function (e) { if (!showcase.contains(e.relatedTarget)) scFocus = false; });
+
+        // Touch pauses briefly; a sideways swipe on the photo changes project
+        var scTouch = null;
+        var scTouchTimer;
+        showcase.addEventListener('touchstart', function (e) {
+            scTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            window.clearTimeout(scTouchTimer);
+            scHover = true;
+        }, { passive: true });
+        showcase.addEventListener('touchend', function (e) {
+            if (scTouch && e.target.closest('.showcase__media')) {
+                var dx = e.changedTouches[0].clientX - scTouch.x;
+                var dy = e.changedTouches[0].clientY - scTouch.y;
+                if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) scGo(scIndex + (dx < 0 ? 1 : -1));
+            }
+            scTouch = null;
+            scTouchTimer = window.setTimeout(function () { scHover = false; }, 4000);
+        }, { passive: true });
+
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (entries) { scOnScreen = entries[0].isIntersecting; }, { threshold: 0.4 }).observe(showcase);
+        } else {
+            scOnScreen = true;
+        }
+
+        scSetPaused(scUserPaused);
+        scGo(0);
+        window.requestAnimationFrame(scTick);
     }
 })();

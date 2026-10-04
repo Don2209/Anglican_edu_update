@@ -16,9 +16,9 @@ $footerLearning = [
 ];
 
 $footerInstitutes = [
-    'Langham Girls High School' => 'about.php#langham',
-    "St Oswald's"               => 'about.php#st-oswalds',
-    "St John's Chikwaka"        => 'about.php#st-johns-chikwaka',
+    'Langham Girls High School' => 'institutes.php#langham',
+    "St Oswald's"               => 'institutes.php#st-oswalds',
+    "St John's Chikwaka"        => 'institutes.php#st-johns-chikwaka',
 ];
 
 $mapUrl = 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode(implode(', ', SITE_ADDRESS));

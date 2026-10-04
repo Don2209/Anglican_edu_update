@@ -79,8 +79,8 @@
     background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%) no-repeat;
     background-size: 250% 100%;
     background-position: 150% 0;
-    -webkit-mask: url("assets/images/brand/diocese-crest.svg") center / 84% auto no-repeat;
-    mask: url("assets/images/brand/diocese-crest.svg") center / 84% auto no-repeat;
+    -webkit-mask: url("assets/images/brand/diocese-crest-mark.webp") center / 84% auto no-repeat;
+    mask: url("assets/images/brand/diocese-crest-mark.webp") center / 84% auto no-repeat;
     animation: preloader-glint 900ms ease-in-out 1750ms forwards;
     pointer-events: none;
 }

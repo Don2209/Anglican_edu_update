@@ -24,7 +24,7 @@ $discoverItems = [
         'alt'   => 'A two-storey Anglican school building beside a wide lawn',
         'title' => 'School Profiles',
         'text'  => 'The Anglican Diocese of Harare Education Department plays a vital role in the provision of quality education within Harare. With a focus on academic excellence, affordability, sports and cultural development, and Christian values, the department aims to empower students with the necessary knowledge, skills, and values to become responsible. Educating the nation is a calling.',
-        'href'  => 'about.php#institutions',
+        'href'  => 'institutes.php',
     ],
     [
         'image' => 'admissions',

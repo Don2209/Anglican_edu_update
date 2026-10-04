@@ -1,0 +1,1334 @@
+/* ==========================================================================
+   Contact page
+   Builds on main.css (tokens, header, footer, .reveal, .split, .button).
+   ========================================================================== */
+
+main {
+    background: #ffffff;
+    color: var(--color-muted);
+}
+
+.chero__inner,
+.methods,
+.message__inner,
+.visit__inner,
+.faq__inner {
+    width: min(1240px, 100% - 2 * clamp(16px, 4vw, 48px));
+    margin-inline: auto;
+}
+
+/* ==========================================================================
+   Hero
+   ========================================================================== */
+
+.chero {
+    --away: max(0, calc(var(--p, 0.42) - 0.42));
+    position: relative;
+    isolation: isolate;
+    padding: clamp(120px, 15vw, 170px) 0 clamp(48px, 6vw, 80px);
+    overflow-x: clip;
+}
+
+.chero__glow {
+    position: absolute;
+    z-index: -1;
+    right: 6%;
+    top: 10%;
+    width: min(50vw, 600px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(220, 36, 28, 0.15), transparent);
+    filter: blur(20px);
+    translate: 0 calc(var(--away) * 220px);
+    animation: chero-breathe 8s ease-in-out infinite alternate;
+    pointer-events: none;
+}
+
+@keyframes chero-breathe {
+    from { transform: scale(0.9) translate(-4%, 3%); }
+    to   { transform: scale(1.1) translate(4%, -3%); }
+}
+
+.chero__inner {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    gap: clamp(32px, 6vw, 96px);
+}
+
+.chero__copy {
+    translate: 0 calc(var(--away) * -140px);
+}
+
+.chero__title {
+    margin: 0 0 1.5rem;
+    font-size: clamp(3.4rem, 11vw, 10rem);
+    font-weight: 800;
+    line-height: 0.88;
+    letter-spacing: -0.06em;
+    color: var(--color-dark);
+}
+
+.chero__title em {
+    font-style: normal;
+    color: var(--color-brand);
+}
+
+.chero__line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.06em;
+}
+
+.chero__line > span {
+    display: inline-block;
+    animation: chero-rise 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--d) * 120ms + 150ms);
+}
+
+.chero__fade {
+    animation: chero-fade 900ms var(--ease) both;
+    animation-delay: calc(var(--d) * 120ms + 150ms);
+}
+
+@keyframes chero-rise {
+    from { transform: translateY(105%) rotate(5deg); }
+}
+
+@keyframes chero-fade {
+    from { opacity: 0; transform: translateY(20px); }
+}
+
+.chero__lead {
+    max-width: 48ch;
+    margin: 0 0 2rem;
+    font-size: clamp(1rem, 1.4vw, 1.15rem);
+    line-height: 1.7;
+}
+
+.chero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 28px;
+}
+
+.chero__link {
+    color: var(--color-dark);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgba(20, 20, 20, 0.25);
+    text-underline-offset: 6px;
+    transition: text-decoration-color 250ms;
+}
+
+.chero__link:hover {
+    text-decoration-color: var(--color-brand);
+}
+
+/* --- Office card --------------------------------------------------------- */
+
+.office {
+    position: relative;
+    padding: clamp(28px, 3.5vw, 40px);
+    padding-top: 112px;
+    border-radius: 36px;
+    background:
+        radial-gradient(80% 60% at 100% 0%, rgba(220, 36, 28, 0.35), transparent 70%),
+        var(--color-dark);
+    color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 40px 80px -40px rgba(20, 20, 20, 0.6);
+    translate: 0 calc(var(--away) * 80px);
+    overflow: hidden;
+}
+
+/* Signal rings radiating from the call button */
+.office__signal {
+    position: absolute;
+    left: clamp(28px, 3.5vw, 40px);
+    top: 30px;
+    width: 64px;
+    height: 64px;
+}
+
+.office__signal span {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(220, 36, 28, 0.7);
+    animation: signal 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.office__signal span:nth-child(2) { animation-delay: 0.8s; }
+.office__signal span:nth-child(3) { animation-delay: 1.6s; }
+
+@keyframes signal {
+    from { transform: scale(1); opacity: 1; }
+    to   { transform: scale(2.6); opacity: 0; }
+}
+
+.office__call {
+    position: absolute;
+    z-index: 1;
+    left: clamp(28px, 3.5vw, 40px);
+    top: 30px;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    color: #ffffff;
+    transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.office__call:hover {
+    transform: scale(1.1) rotate(-12deg);
+}
+
+.office__kicker {
+    margin: 0 0 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-brand-light);
+}
+
+.office__phone {
+    margin: 0 0 26px;
+    font-size: clamp(1.6rem, 2.8vw, 2.3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.office__phone a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.office__meta {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.office__meta div {
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.office__meta dt {
+    margin-bottom: 4px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.office__meta dd {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.office__clock {
+    margin-right: 8px;
+    font-size: 1.6rem;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Blinking colon */
+.office__clock .colon {
+    animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.2; }
+}
+
+.office__day {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   Methods
+   ========================================================================== */
+
+.methods {
+    position: relative;
+    padding-bottom: clamp(64px, 8vw, 110px);
+}
+
+.methods__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.method {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    border-radius: 30px;
+    background: #f7f6f3;
+    overflow: hidden;
+    transition: translate 500ms var(--ease), box-shadow 500ms;
+}
+
+.js .method.reveal {
+    transition: opacity 800ms var(--ease) var(--delay, 0ms), transform 800ms var(--ease) var(--delay, 0ms),
+                translate 500ms var(--ease), box-shadow 500ms;
+}
+
+.method:hover {
+    translate: 0 -6px;
+    box-shadow: 0 30px 60px -30px rgba(20, 20, 20, 0.35);
+}
+
+/* Cursor spotlight (pointer from sections.js) */
+.method::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(220, 36, 28, 0.12), transparent 70%);
+    opacity: 0;
+    transition: opacity 400ms;
+}
+
+.method:hover::before {
+    opacity: 1;
+}
+
+.method__icon {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 30px;
+    border-radius: 18px;
+    background: #ffffff;
+    color: var(--color-brand);
+    transition: background-color 400ms, color 400ms;
+}
+
+.method:hover .method__icon {
+    background: var(--color-brand);
+    color: #ffffff;
+}
+
+/* Icon micro-animations */
+.method--call:hover .method__icon svg {
+    animation: ring 700ms ease-in-out;
+}
+
+@keyframes ring {
+    0%, 100% { transform: rotate(0); }
+    20%, 60% { transform: rotate(-14deg); }
+    40%, 80% { transform: rotate(14deg); }
+}
+
+.method__flap {
+    transform-origin: 50% 30%;
+    transition: transform 400ms var(--ease);
+}
+
+.method--email:hover .method__flap {
+    transform: scaleY(-1);
+}
+
+.method--visit:hover .method__icon svg {
+    animation: hop 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes hop {
+    40% { transform: translateY(-7px); }
+}
+
+.method__title {
+    margin: 0 0 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+}
+
+.method__value {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    color: var(--color-dark);
+}
+
+.method__value--email {
+    font-size: clamp(0.9rem, 1.15vw, 1rem);
+    overflow-wrap: anywhere;   /* long address breaks cleanly rather than overflowing */
+}
+
+.method__note {
+    margin: 0 0 24px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.method__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.method__btn,
+.method__copy {
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 250ms, color 250ms, border-color 250ms;
+}
+
+.method__btn {
+    background: var(--color-dark);
+    color: #ffffff;
+}
+
+.method__btn:hover {
+    background: var(--color-brand);
+}
+
+.method__copy {
+    border: 1px solid rgba(20, 20, 20, 0.16);
+    background: #ffffff;
+    color: var(--color-dark);
+}
+
+.method__copy:hover {
+    border-color: var(--color-dark);
+}
+
+.method__copy.is-copied {
+    border-color: var(--color-brand);
+    background: var(--color-brand);
+    color: #ffffff;
+}
+
+.methods__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.methods__social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid rgba(20, 20, 20, 0.14);
+    border-radius: 999px;
+    color: var(--color-dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* Copy confirmation toast */
+.toast {
+    position: fixed;
+    z-index: 120;
+    left: 50%;
+    bottom: 28px;
+    margin: 0;
+    padding: 0.75rem 1.2rem;
+    border-radius: 999px;
+    background: var(--color-dark);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translate(-50%, 20px);
+    pointer-events: none;
+    transition: opacity 300ms, transform 400ms var(--ease);
+}
+
+.toast.is-shown {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* ==========================================================================
+   Message form
+   ========================================================================== */
+
+.message {
+    padding: clamp(64px, 8vw, 110px) 0;
+    background:
+        radial-gradient(50% 60% at 0% 30%, rgba(220, 36, 28, 0.06), transparent 70%),
+        #f5f4f1;
+    scroll-margin-top: 60px;
+}
+
+.message__inner {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: clamp(32px, 6vw, 88px);
+    align-items: start;
+}
+
+.message__intro {
+    position: sticky;
+    top: 120px;
+}
+
+.message__title,
+.visit__title,
+.faq__title {
+    margin: 0 0 1rem;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--color-dark);
+}
+
+.message__lead {
+    margin: 0 0 2rem;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.next {
+    display: grid;
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.next li {
+    display: flex;
+    gap: 16px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.next span {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: var(--color-brand);
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 6px 16px -8px rgba(20, 20, 20, 0.25);
+}
+
+.next strong {
+    color: var(--color-dark);
+}
+
+.next a {
+    color: var(--color-brand);
+    font-weight: 600;
+}
+
+.message__card {
+    position: relative;
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: 36px;
+    background: #ffffff;
+    box-shadow: 0 40px 80px -48px rgba(20, 20, 20, 0.4);
+}
+
+.cform__hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.cform__alert {
+    margin: 0 0 20px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    background: rgba(220, 36, 28, 0.08);
+    color: var(--color-brand-deep);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* --- Topic pills --------------------------------------------------------- */
+
+.topics {
+    margin: 0 0 22px;
+    padding: 0;
+    border: 0;
+}
+
+.topics__legend {
+    margin-bottom: 12px;
+    padding: 0;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-dark);
+}
+
+.topics__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.topic input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.topic span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.6rem 1rem;
+    border: 1px solid rgba(20, 20, 20, 0.14);
+    border-radius: 999px;
+    color: var(--color-dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 250ms, color 250ms, border-color 250ms, transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.topic span:hover {
+    border-color: var(--color-dark);
+}
+
+.topic input:checked + span {
+    border-color: var(--color-dark);
+    background: var(--color-dark);
+    color: #ffffff;
+    transform: scale(1.04);
+}
+
+.topic input:checked + span::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-brand);
+}
+
+.topic input:focus-visible + span {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+/* --- Floating-label fields ---------------------------------------------- */
+
+.cform__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.field {
+    position: relative;
+    margin-bottom: 14px;
+}
+
+.field__input {
+    width: 100%;
+    padding: 26px 18px 10px;
+    border: 1px solid rgba(20, 20, 20, 0.14);
+    border-radius: 18px;
+    background: #faf9f7;
+    color: var(--color-dark);
+    font: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 250ms, box-shadow 250ms, background-color 250ms;
+    appearance: none;
+}
+
+.field--area .field__input {
+    min-height: 170px;
+    padding-bottom: 32px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.field--select .field__input {
+    padding-right: 44px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%23141414' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+.field__input:hover {
+    border-color: rgba(20, 20, 20, 0.3);
+}
+
+.field__input:focus {
+    border-color: var(--color-dark);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(220, 36, 28, 0.12);
+}
+
+.field__label {
+    position: absolute;
+    left: 19px;
+    top: 18px;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+    pointer-events: none;
+    transform-origin: left top;
+    transition: transform 250ms var(--ease), color 250ms;
+}
+
+/* Label floats up when the field has focus or a value */
+.field__input:focus + .field__label,
+.field__input:not(:placeholder-shown) + .field__label,
+.field__label.is-fixed {
+    transform: translateY(-10px) scale(0.76);
+    color: var(--color-dark);
+    font-weight: 600;
+}
+
+.field__input[aria-invalid="true"] {
+    border-color: var(--color-brand);
+    background: #fff8f7;
+}
+
+.field__error {
+    margin: 6px 4px 0;
+    color: var(--color-brand-deep);
+    font-size: 0.8rem;
+    font-weight: 600;
+    animation: shake 400ms;
+}
+
+@keyframes shake {
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.field__box {
+    position: relative;
+}
+
+.field__count {
+    position: absolute;
+    right: 16px;
+    bottom: 12px;
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+    pointer-events: none;
+}
+
+.field__count.is-near {
+    color: var(--color-brand);
+}
+
+/* School select only shown when it is relevant (JS); always shown without JS */
+.js .field--select.is-collapsed {
+    display: none;
+}
+
+.cform__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+.cform__privacy {
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.cform__submit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 8px 8px 8px 26px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-brand);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    overflow: hidden;
+    transition: background-color 250ms, transform 350ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.cform__submit:hover {
+    background: var(--color-brand-deep);
+}
+
+.cform__submit:disabled {
+    cursor: progress;
+}
+
+.cform__submit-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: var(--color-brand);
+}
+
+.cform__arrow {
+    transform: rotate(-45deg);
+    transition: transform 300ms var(--ease), opacity 200ms;
+}
+
+.cform__submit:hover .cform__arrow {
+    transform: rotate(0deg);
+}
+
+.cform__spinner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(220, 36, 28, 0.25);
+    border-top-color: var(--color-brand);
+    border-radius: 50%;
+    opacity: 0;
+}
+
+.cform.is-sending .cform__arrow {
+    opacity: 0;
+}
+
+.cform.is-sending .cform__spinner {
+    opacity: 1;
+    animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* --- Success state ------------------------------------------------------- */
+
+.cform.is-sent {
+    display: none;
+}
+
+.sent {
+    display: grid;
+    justify-items: center;
+    padding: clamp(24px, 6vw, 72px) 12px;
+    text-align: center;
+    outline: none;
+    animation: chero-fade 600ms var(--ease) both;
+}
+
+.sent[hidden] {
+    display: none;
+}
+
+.sent__check {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 22px;
+}
+
+.sent__check circle,
+.sent__check path {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+}
+
+.sent__check circle {
+    stroke: rgba(220, 36, 28, 0.25);
+    animation: draw 700ms cubic-bezier(0.65, 0, 0.35, 1) 150ms forwards;
+}
+
+.sent__check path {
+    stroke: var(--color-brand);
+    stroke-width: 5;
+    animation: draw 500ms cubic-bezier(0.65, 0, 0.35, 1) 750ms forwards;
+}
+
+@keyframes draw {
+    to { stroke-dashoffset: 0; }
+}
+
+.sent__title {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--color-dark);
+}
+
+.sent__text {
+    max-width: 44ch;
+    margin: 0 0 24px;
+    line-height: 1.7;
+}
+
+.sent__text a {
+    color: var(--color-brand);
+    font-weight: 600;
+}
+
+.sent__again {
+    padding: 0.7rem 1.3rem;
+    border: 1px solid rgba(20, 20, 20, 0.16);
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--color-dark);
+    font-weight: 600;
+}
+
+.sent__again:hover {
+    border-color: var(--color-dark);
+}
+
+/* ==========================================================================
+   Map
+   ========================================================================== */
+
+.visit {
+    padding: clamp(64px, 8vw, 110px) 0 clamp(40px, 5vw, 64px);
+}
+
+.visit__header {
+    margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.mapcard {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    min-height: clamp(380px, 52vh, 520px);
+    border-radius: 36px;
+    overflow: hidden;
+    background: #ebe8e2;
+}
+
+.mapcard__placeholder,
+.mapcard iframe {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    border: 0;
+}
+
+.mapcard__placeholder {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+/* Abstract street map drawn with gradients; slowly pans */
+.mapcard__streets {
+    position: absolute;
+    inset: -20%;
+    background:
+        linear-gradient(28deg, transparent 49.4%, rgba(255, 255, 255, 0.9) 49.5%, rgba(255, 255, 255, 0.9) 50.5%, transparent 50.6%) 0 0 / 420px 420px,
+        linear-gradient(-62deg, transparent 49.2%, rgba(255, 255, 255, 0.95) 49.3%, rgba(255, 255, 255, 0.95) 50.7%, transparent 50.8%) 0 0 / 300px 300px,
+        linear-gradient(90deg, transparent 48.8%, rgba(255, 255, 255, 0.7) 49%, rgba(255, 255, 255, 0.7) 51%, transparent 51.2%) 0 0 / 180px 180px,
+        linear-gradient(0deg, transparent 48.8%, rgba(255, 255, 255, 0.7) 49%, rgba(255, 255, 255, 0.7) 51%, transparent 51.2%) 0 0 / 180px 180px,
+        radial-gradient(circle at 70% 30%, rgba(132, 176, 120, 0.35) 0 90px, transparent 91px),
+        radial-gradient(circle at 20% 80%, rgba(132, 176, 120, 0.3) 0 120px, transparent 121px),
+        #ebe8e2;
+    animation: map-pan 40s linear infinite alternate;
+}
+
+@keyframes map-pan {
+    to { transform: translate(6%, -4%) rotate(1deg); }
+}
+
+.mapcard__pin {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 70px;
+    color: var(--color-brand);
+    filter: drop-shadow(0 10px 14px rgba(220, 36, 28, 0.4));
+    animation: pin-drop 900ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.mapcard__pin svg {
+    position: relative;
+    z-index: 1;
+    width: 54px;
+    height: 54px;
+}
+
+@keyframes pin-drop {
+    from { transform: translateY(-80px); opacity: 0; }
+}
+
+.mapcard__pulse {
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    width: 22px;
+    height: 8px;
+    margin-left: -11px;
+    border-radius: 50%;
+    background: rgba(220, 36, 28, 0.5);
+    animation: map-pulse 2s ease-out infinite;
+}
+
+.mapcard__pulse + .mapcard__pulse {
+    animation-delay: 1s;
+}
+
+@keyframes map-pulse {
+    from { transform: scale(1); opacity: 0.8; }
+    to   { transform: scale(5); opacity: 0; }
+}
+
+.mapcard__load {
+    position: absolute;
+    bottom: clamp(20px, 3vw, 32px);
+    right: clamp(20px, 3vw, 32px);
+    display: grid;
+    gap: 2px;
+    padding: 0.8rem 1.3rem;
+    border: 0;
+    border-radius: 18px;
+    background: #ffffff;
+    color: var(--color-dark);
+    font-weight: 700;
+    text-align: left;
+    box-shadow: 0 14px 30px -14px rgba(20, 20, 20, 0.4);
+    transition: transform 250ms var(--ease);
+}
+
+.mapcard__load:hover {
+    transform: translateY(-2px);
+}
+
+.mapcard__note {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--color-muted);
+}
+
+/* Floating address card */
+.mapcard__address {
+    position: absolute;
+    left: clamp(16px, 3vw, 32px);
+    top: clamp(16px, 3vw, 32px);
+    max-width: 300px;
+    padding: 22px 24px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 44px -22px rgba(20, 20, 20, 0.45);
+}
+
+.mapcard__kicker {
+    margin: 0 0 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.45;
+    text-transform: uppercase;
+    color: var(--color-brand);
+}
+
+.mapcard__address address {
+    margin-bottom: 16px;
+    font-style: normal;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.55;
+    color: var(--color-dark);
+}
+
+.mapcard__dir {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    background: var(--color-dark);
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 250ms;
+}
+
+.mapcard__dir:hover {
+    background: var(--color-brand);
+}
+
+.mapcard.is-loaded .mapcard__placeholder {
+    display: none;
+}
+
+/* ==========================================================================
+   FAQ
+   ========================================================================== */
+
+.faq {
+    padding: clamp(48px, 6vw, 80px) 0 clamp(72px, 9vw, 120px);
+}
+
+.faq__inner {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(32px, 6vw, 88px);
+    align-items: start;
+}
+
+.faq__header {
+    position: sticky;
+    top: 120px;
+}
+
+.faq__lead {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.faq__lead a {
+    color: var(--color-brand);
+    font-weight: 600;
+}
+
+.faq__list {
+    border-top: 1px solid rgba(20, 20, 20, 0.1);
+}
+
+.faq__item {
+    border-bottom: 1px solid rgba(20, 20, 20, 0.1);
+}
+
+.faq__q {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 18px;
+    padding: 24px 4px;
+    color: var(--color-dark);
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    cursor: pointer;
+    list-style: none;
+    transition: color 250ms;
+}
+
+.faq__q::-webkit-details-marker {
+    display: none;
+}
+
+.faq__q:hover {
+    color: var(--color-brand);
+}
+
+.faq__q:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+.faq__n {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--color-brand);
+}
+
+.faq__icon {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(20, 20, 20, 0.16);
+    transition: background-color 300ms, border-color 300ms, transform 400ms var(--ease);
+}
+
+.faq__icon::before,
+.faq__icon::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    margin: -1px 0 0 -6px;
+    background: var(--color-dark);
+    transition: transform 400ms var(--ease), background-color 300ms;
+}
+
+.faq__icon::after {
+    transform: rotate(90deg);
+}
+
+.faq__item[open] .faq__icon {
+    border-color: var(--color-brand);
+    background: var(--color-brand);
+    transform: rotate(180deg);
+}
+
+.faq__item[open] .faq__icon::before,
+.faq__item[open] .faq__icon::after {
+    background: #ffffff;
+}
+
+.faq__item[open] .faq__icon::after {
+    transform: rotate(0deg);
+}
+
+.faq__a p {
+    max-width: 62ch;
+    margin: 0;
+    padding: 0 4px 26px calc(18px + 2.2rem);
+    font-size: 0.98rem;
+    line-height: 1.75;
+    animation: chero-fade 500ms var(--ease);
+}
+
+.faq__a a {
+    color: var(--color-brand);
+    font-weight: 600;
+}
+
+@supports (interpolate-size: allow-keywords) {
+    .faq__item {
+        interpolate-size: allow-keywords;
+    }
+
+    .faq__item::details-content {
+        height: 0;
+        overflow: clip;
+        transition: height 500ms cubic-bezier(0.22, 1, 0.36, 1), content-visibility 500ms allow-discrete;
+    }
+
+    .faq__item[open]::details-content {
+        height: auto;
+    }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 960px) {
+    .chero__inner,
+    .message__inner,
+    .faq__inner {
+        grid-template-columns: 1fr;
+    }
+
+    .message__intro,
+    .faq__header {
+        position: static;
+    }
+
+    .methods__grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .cform__row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .cform__foot {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .cform__submit {
+        justify-content: space-between;
+    }
+
+    .mapcard {
+        min-height: 520px;
+    }
+
+    .mapcard__address {
+        left: 14px;
+        right: 14px;
+        top: auto;
+        bottom: 14px;
+        max-width: none;
+    }
+
+    .mapcard__pin {
+        margin-bottom: 220px;
+    }
+
+    .mapcard__load {
+        top: 16px;
+        bottom: auto;
+        right: 16px;
+    }
+
+    .faq__a p {
+        padding-left: 4px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chero__copy,
+    .office,
+    .chero__glow {
+        translate: none !important;
+    }
+
+    .chero__glow,
+    .office__signal span,
+    .mapcard__streets,
+    .mapcard__pulse,
+    .office__clock .colon {
+        animation: none;
+    }
+}

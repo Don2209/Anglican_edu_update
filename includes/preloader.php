@@ -16,7 +16,7 @@ declare(strict_types=1);
 
             <?php
             // Inline the real crest so it paints instantly and each part can be animated.
-            $crest = (string) file_get_contents(dirname(__DIR__) . '/assets/images/brand/diocese-crest.svg');
+            $crest = require __DIR__ . '/partials/crest-svg.php';
             echo str_replace('<svg ', '<svg class="preloader__crest" focusable="false" ', $crest);
             ?>
         </div>

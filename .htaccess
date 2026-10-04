@@ -23,9 +23,10 @@ AddType image/webp .webp
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Never expose the PHP partials or the full-size source photos directly
+# Never expose the PHP partials, stored messages or the full-size source photos
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule ^includes/ - [F,L]
+    RewriteRule ^storage/ - [F,L]
     RewriteRule ^assets/images/.*/originals/ - [F,L]
 </IfModule>

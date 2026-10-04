@@ -32,48 +32,8 @@ return [
         ],
     ],
 
-    'schools' => [
-        [
-            'id' => 'langham', 'name' => 'Langham Girls High School', 'level' => 'secondary', 'tag' => 'Secondary · Girls',
-            'place' => 'Founded 1983',
-            'text' => 'Since 1934, Cathrine Langham ran a home craft centre for women on the farm, which she later donated to the Anglican Church to start a girls-only high school. Langham Girls High School opened in 1983. It runs a well-equipped computer lab and, in 2019, achieved a 92.05% O-Level pass rate, ranking as the 14th best O-Level school.',
-        ],
-        [
-            'id' => 'st-johns-chikwaka', 'name' => "St John's High School, Chikwaka", 'level' => 'secondary', 'tag' => 'Secondary',
-            'place' => 'Goromonzi District, Mashonaland East',
-            'text' => "Officially registered by the Ministry of Primary and Secondary Education, St John's is a leader in the green movement, running a commercial biogas plant and a large broiler poultry project that involve students hands-on.",
-        ],
-        [
-            'id' => 'st-phillips-mangwenya', 'name' => 'St Phillips High School, Mangwenya', 'level' => 'secondary', 'tag' => 'Secondary',
-            'place' => 'Guruve District, Mashonaland Central',
-            'text' => 'The range and quality of extracurricular activities at St Phillips, including sports, arts, music, drama, debate and community service, is commendable. Proudly under the Anglican Diocese of Harare.',
-        ],
-        [
-            'id' => 'st-marys-chitungwiza', 'name' => "St Mary's High School, Chitungwiza", 'level' => 'secondary', 'tag' => 'Secondary',
-            'place' => 'Chitungwiza District, Harare Province',
-            'text' => "Registered by the Ministry of Primary and Secondary Education, St Mary's is known for debating clubs and public speaking competitions that sharpen students' oratory skills and intellectual discourse.",
-        ],
-        [
-            'id' => 'st-marks', 'name' => "St Mark's High School", 'level' => 'secondary', 'tag' => 'Secondary · Mission',
-            'place' => 'Mhondoro, Mashonaland West',
-            'text' => "A mission school owned by the Anglican Church, where learners are educated from a Christian perspective. St Mark's celebrates cultural festivals and events, giving students the chance to learn about their own culture and the cultures of others.",
-        ],
-        [
-            'id' => 'st-oswalds', 'name' => "St Oswald's High School", 'level' => 'secondary', 'tag' => 'Secondary · Mission',
-            'place' => 'Mhondoro-Ngezi District, Mashonaland West',
-            'text' => "St Oswald's builds entrepreneurial skills and innovation through projects that promote creativity, problem-solving and critical thinking, including its agri-business section. Students also take religious studies and chapel services.",
-        ],
-        [
-            'id' => 'st-clares', 'name' => "St Clare's Primary School", 'level' => 'primary', 'tag' => 'Primary',
-            'place' => 'Hanyanga Village, Ward 16, Murewa',
-            'text' => "St Clare's follows a curriculum that adheres to national standards while adding subjects and activities that reflect the school's values and mission.",
-        ],
-        [
-            'id' => 'st-marys-primary', 'name' => "St Mary's Primary School", 'level' => 'primary', 'tag' => 'Primary',
-            'place' => 'Anglican Diocese of Harare',
-            'text' => 'Committed to holistic education grounded in Christian values, with a focus on academic excellence, character development and moral integrity, and dedicated staff giving each student personalised support.',
-        ],
-    ],
+    // Shared with institutes.php
+    'schools' => require dirname(__DIR__) . '/data/schools.php',
 
     'admissions' => [
         ['title' => 'Application',            'text' => 'Students or their parents/guardians submit an application form to their chosen school through the ministry portal, with personal details, contact information, academic history and any required documents.'],
@@ -127,12 +87,12 @@ return [
     ],
 
     'strip' => [
-        ['image' => $img . 'track',          'alt' => 'Two athletes sprinting on a stadium track'],
-        ['image' => $img . 'stands',         'alt' => 'Students filling the stands at an athletics meet'],
-        ['image' => 'assets/images/gallery/gallery-marimba', 'alt' => 'Students playing marimbas'],
-        ['image' => $img . 'teams',          'alt' => 'School teams lined up on the track'],
-        ['image' => $img . 'prize-giving',   'alt' => 'A young footballer receiving a prize from officials'],
-        ['image' => $img . 'athletes-group', 'alt' => 'Athletes in team colours gathered with their coaches'],
+        ['image' => $img . 'track',          'tag' => 'Athletics', 'caption' => 'Neck and neck on the home straight', 'alt' => 'Two athletes sprinting on a stadium track'],
+        ['image' => $img . 'stands',         'tag' => 'Athletics', 'caption' => 'Schools filling the stands on meet day', 'alt' => 'Students filling the stands at an athletics meet'],
+        ['image' => 'assets/images/gallery/gallery-marimba', 'tag' => 'Music', 'caption' => 'Marimba practice in the music room', 'alt' => 'Students playing marimbas'],
+        ['image' => $img . 'teams',          'tag' => 'Teamwork', 'caption' => 'School teams lined up on the track', 'alt' => 'School teams lined up on the track'],
+        ['image' => $img . 'prize-giving',   'tag' => 'Soccer', 'caption' => 'Honouring a young footballer', 'alt' => 'A young footballer receiving a prize from officials'],
+        ['image' => $img . 'athletes-group', 'tag' => 'Community', 'caption' => 'Athletes and coaches together', 'alt' => 'Athletes in team colours gathered with their coaches'],
     ],
 
     'projects' => [

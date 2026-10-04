@@ -10,6 +10,16 @@ const SITE_TAGLINE = 'Faith, excellence and holistic education across the Anglic
 const SITE_PHONE   = '+263773525089';
 const SITE_PHONE_DISPLAY = '+263 773 525 089';
 const SITE_ADDRESS = ['87 Kwame Nkrumah Avenue', 'Harare, Zimbabwe'];
+const SITE_ADDRESS_DETAIL = 'Office Number 2, First Floor';
+const SITE_EMAIL = 'info@anglicandioceseofharareedu.org.zw';
+const SITE_TIMEZONE = 'Africa/Harare';
+
+/**
+ * Contact form delivery. Messages are always saved to storage/messages/.
+ * Set to true once the server can send mail (sendmail/SMTP configured) to
+ * also email each message to SITE_EMAIL.
+ */
+const CONTACT_MAIL_ENABLED = false;
 
 /** Credit shown in the footer. */
 const SITE_CREDIT_OWNER = 'Visyn Technologies Pvt Ltd';
@@ -19,7 +29,7 @@ const SITE_CREDIT_URL   = 'https://visyntech.co.zw';
 const NAV_LINKS = [
     'Home'          => 'index.php',
     'About'         => 'about.php',
-    'Institutes'    => 'about.php#institutions',
+    'Institutes'    => 'institutes.php',
     'Academics'     => 'about.php#academics',
     'Sports'        => 'about.php#sports',
     'Projects'      => 'about.php#projects',
@@ -130,4 +140,21 @@ function picture_img(string $base, string $alt, string $sizes, array $attrs = []
     }
 
     return $html . '>';
+}
+
+/** Two-letter monogram for a school, e.g. "St Clare's Primary School" → "SC". */
+function school_initials(string $name): string
+{
+    $skip = ['School', 'High', 'Primary', 'Girls'];
+    $letters = '';
+    foreach (preg_split('/[\s,]+/', preg_replace("/'s\\b/", '', $name)) as $word) {
+        if ($word !== '' && ctype_upper($word[0]) && !in_array($word, $skip, true)) {
+            $letters .= $word[0];
+        }
+        if (strlen($letters) === 2) {
+            break;
+        }
+    }
+
+    return $letters;
 }

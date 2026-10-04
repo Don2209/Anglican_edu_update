@@ -1,7 +1,7 @@
 <?php
 /**
  * Chapter 03: Sports & Culture. Two counter-scrolling rows of disciplines,
- * event "tickets" and a draggable photo strip.
+ * event "tickets" and a curved 3D photo reel (assets/js/about.js).
  *
  * @var array $data
  */
@@ -64,13 +64,51 @@ declare(strict_types=1);
     </div>
 </div>
 
-<div class="strip" data-strip>
-    <ul class="strip__track" role="list" tabindex="0" aria-label="Sports and culture photos (scroll sideways)">
-        <?php foreach ($data['strip'] as $photo): ?>
-            <li class="strip__item">
-                <?= picture_img($photo['image'], $photo['alt'], '(min-width: 900px) 420px, 78vw', ['draggable' => 'false']) ?>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-    <p class="strip__hint" aria-hidden="true">Drag to explore ⟷</p>
-</div>
+<section class="reel" aria-labelledby="reel-title" aria-roledescription="carousel" data-reel>
+    <header class="reel__header">
+        <div>
+            <p class="section-eyebrow">In pictures</p>
+            <h3 class="reel__title" id="reel-title">Moments on the field and stage</h3>
+        </div>
+        <div class="reel__controls" hidden data-reel-controls>
+            <p class="reel__count" aria-hidden="true"><span data-reel-current>01</span><span class="reel__count-total"> / <?= sprintf('%02d', count($data['strip'])) ?></span></p>
+            <button class="reel__btn" type="button" data-reel-prev>
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="visually-hidden">Previous photo</span>
+            </button>
+            <button class="reel__btn reel__btn--play" type="button" aria-pressed="false" data-reel-pause>
+                <svg class="reel__icon-pause" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M7 5h3v14H7zM14 5h3v14h-3z"/></svg>
+                <svg class="reel__icon-play" aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span class="visually-hidden">Pause slideshow</span>
+            </button>
+            <button class="reel__btn" type="button" data-reel-next>
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="visually-hidden">Next photo</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="reel__stage" tabindex="0" aria-label="Photos: drag, swipe or use the arrow keys" data-reel-stage>
+        <div class="reel__track" data-reel-track>
+            <?php foreach ($data['strip'] as $i => $photo): ?>
+                <div class="reel__card" role="group" aria-roledescription="slide" aria-label="<?= $i + 1 ?> of <?= count($data['strip']) ?>: <?= e($photo['caption']) ?>" data-reel-card>
+                    <figure class="reel__figure">
+                        <?= picture_img($photo['image'], $photo['alt'], '(min-width: 900px) 380px, 70vw', ['draggable' => 'false']) ?>
+                        <figcaption class="reel__caption">
+                            <span class="reel__tag"><?= e($photo['tag']) ?></span>
+                            <span class="reel__text"><?= e($photo['caption']) ?></span>
+                        </figcaption>
+                    </figure>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <div class="reel__footer" hidden data-reel-footer>
+        <div class="reel__progress" aria-hidden="true"><span data-reel-progress></span></div>
+        <p class="reel__hint" aria-hidden="true">
+            <span class="reel__hint-icon"></span> Drag, swipe or use the arrows
+        </p>
+    </div>
+    <p class="visually-hidden" aria-live="polite" data-reel-status></p>
+</section>

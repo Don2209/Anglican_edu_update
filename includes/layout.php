@@ -38,8 +38,7 @@ function page_open(array $page = []): void
     <meta property="og:description" content="<?= e($description) ?>">
     <meta property="og:image" content="<?= e($image) ?>">
 
-    <link rel="icon" href="<?= asset('assets/images/brand/diocese-crest.svg') ?>" type="image/svg+xml">
-    <link rel="alternate icon" href="<?= asset('assets/images/brand/diocese-crest.webp') ?>" type="image/webp">
+    <link rel="icon" href="<?= asset('assets/images/brand/favicon.webp') ?>" type="image/webp" sizes="256x256">
 <?php if (!empty($page['preload'])): ?>
 
     <!-- Start the largest image downloading before CSS is parsed (LCP) -->

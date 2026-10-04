@@ -1,0 +1,263 @@
+/* Shared chart styles (pass-rate bars). Used by about.php and institutes.php. */
+
+/* Validated pair (dataviz validator, light & dark): O Level blue, A Level crest red */
+
+.results {
+    overflow-x: clip;   /* tooltips may rise above the chart but never widen the page */
+    --series-o: #2d6cb5;
+    --series-a: var(--color-brand);
+    margin: 16px 0 0;
+    padding: 18px 18px 14px;
+    border: 1px solid rgba(20, 20, 20, 0.08);
+    border-radius: 18px;
+    background: #ffffff;
+}
+
+.results__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-bottom: 14px;
+}
+
+.results__title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-dark);
+}
+
+.results__legend {
+    display: flex;
+    gap: 14px;
+}
+
+.results__key {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--color-muted);
+}
+
+.results__key::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+}
+
+.results__key--o::before { background: var(--series-o); }
+.results__key--a::before { background: var(--series-a); }
+
+.results__plot {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 150px;
+    padding: 18px 0 0 34px;
+}
+
+/* Recessive gridlines at 50% and 100% */
+.results__grid {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(22px + (100% - 40px) * var(--at) / 100);
+    height: 0;
+    border-top: 1px dashed rgba(20, 20, 20, 0.12);
+    font-size: 0.62rem;
+    line-height: 0;
+    color: var(--color-muted);
+    pointer-events: none;
+}
+
+.results__grid::before {
+    content: "";
+}
+
+.results__year {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+}
+
+.results__bars {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;   /* surface gap between adjacent bars */
+    width: 100%;
+}
+
+.results__bar {
+    position: relative;
+    flex: 1;
+    max-width: 16px;
+    height: calc(var(--v) * 1%);
+    border-radius: 4px 4px 0 0;
+    transform-origin: bottom;
+}
+
+.results__bar--o { background: var(--series-o); }
+.results__bar--a { background: var(--series-a); }
+
+.results__plot--single .results__bar {
+    max-width: 22px;
+}
+
+/* Bars grow when the panel opens */
+:is(.schools__details[open], .results.is-visible) .results__bar {
+    animation: bar-grow 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+:is(.schools__details[open], .results.is-visible) .results__year:nth-child(4) .results__bar { animation-delay: 60ms; }
+:is(.schools__details[open], .results.is-visible) .results__year:nth-child(5) .results__bar { animation-delay: 120ms; }
+:is(.schools__details[open], .results.is-visible) .results__year:nth-child(6) .results__bar { animation-delay: 180ms; }
+:is(.schools__details[open], .results.is-visible) .results__year:nth-child(7) .results__bar { animation-delay: 240ms; }
+:is(.schools__details[open], .results.is-visible) .results__year:nth-child(8) .results__bar { animation-delay: 300ms; }
+:is(.schools__details[open], .results.is-visible) .results__year:nth-child(9) .results__bar { animation-delay: 360ms; }
+
+@keyframes bar-grow {
+    from { transform: scaleY(0); }
+}
+
+/* Selective direct labels: latest year only */
+.results__value {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 3px);
+    translate: -50% 0;
+    font-size: 0.6rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--color-dark);
+}
+
+/* Hover tooltip (hit target wider than the thin bar) */
+.results__bar::before {
+    content: "";
+    position: absolute;
+    inset: -6px -4px 0;
+}
+
+.results__bar::after {
+    content: attr(data-tip);
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    bottom: calc(100% + 18px);
+    translate: -50% 4px;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    background: var(--color-dark);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms, translate 150ms;
+}
+
+/* Keep edge tooltips inside the chart (an invisible tooltip still takes
+   space, so one hanging off the right edge would widen the page) */
+.results__year:first-child .results__bar::after {
+    left: 0;
+    translate: 0 4px;
+}
+
+.results__year:last-child .results__bar::after {
+    left: auto;
+    right: 0;
+    translate: 0 4px;
+}
+
+.results__year:first-child .results__bar:hover::after,
+.results__year:last-child .results__bar:hover::after {
+    opacity: 1;
+    translate: 0 0;
+}
+
+.results__bar:hover::after {
+    opacity: 1;
+    translate: -50% 0;
+}
+
+.results__bars:hover .results__bar:not(:hover) {
+    opacity: 0.45;
+}
+
+.results__label {
+    font-size: clamp(0.5rem, 2.4vw, 0.66rem);
+    font-weight: 600;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.results__table {
+    margin-top: 10px;
+    font-size: 0.78rem;
+}
+
+.results__table summary {
+    width: max-content;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-dark);
+}
+
+.results__table table {
+    width: 100%;
+    margin-top: 8px;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+
+.results__table th,
+.results__table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(20, 20, 20, 0.08);
+    text-align: left;
+}
+
+/* Smoothly open <details> where supported */
+@supports (interpolate-size: allow-keywords) {
+    .schools__details {
+        interpolate-size: allow-keywords;
+    }
+
+    .schools__details::details-content {
+        height: 0;
+        overflow: clip;
+        transition: height 500ms cubic-bezier(0.22, 1, 0.36, 1), content-visibility 500ms allow-discrete;
+    }
+
+    .schools__details[open]::details-content {
+        height: auto;
+    }
+}
+
+.js .schools__item[hidden] {
+    display: none;
+}
+
+
+@media (max-width: 420px) {
+    .results__plot {
+        gap: 3px;
+        padding-left: 28px;
+    }
+
+    .results__value {
+        font-size: 0.52rem;
+    }
+}

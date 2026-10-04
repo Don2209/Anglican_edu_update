@@ -3416,3 +3416,46 @@ main {
 .site-header .hero__bar {
     z-index: 6;
 }
+
+/* ==========================================================================
+   Shared: segmented control (filters on inner pages)
+   ========================================================================== */
+
+.seg {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #f1f0ed;
+}
+
+.seg button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--color-dark);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color 250ms, color 250ms, box-shadow 250ms;
+}
+
+.seg button span {
+    font-size: 0.72rem;
+    opacity: 0.55;
+}
+
+.seg button[aria-pressed="true"] {
+    background: #ffffff;
+    box-shadow: 0 4px 14px -6px rgba(20, 20, 20, 0.3);
+}
+
+.seg button[aria-pressed="true"] span {
+    color: var(--color-brand);
+    opacity: 1;
+}
+
