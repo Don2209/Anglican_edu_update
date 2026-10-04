@@ -1,0 +1,231 @@
+/* Intro screen. Inlined into <head> by index.php so it paints first. */
+
+.intro-seen .preloader {
+    display: none;
+}
+
+.preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle at 50% 42%, #262626 0%, #141414 55%, #0b0b0b 100%);
+    color: #ffffff;
+    font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    transition: opacity 600ms ease, visibility 0s linear 600ms;
+    /* Safety net: disappear on its own even if JS never runs */
+    animation: preloader-timeout 500ms ease 6s forwards;
+}
+
+.preloader.is-done {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.preloader.is-done .preloader__inner {
+    transform: scale(1.06);
+}
+
+.preloader__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 600ms ease;
+}
+
+/* --- Crest + orbit ------------------------------------------------------ */
+
+.preloader__mark {
+    position: relative;
+    width: clamp(220px, 60vw, 300px);
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+}
+
+.preloader__orbit {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    animation: preloader-spin 8s linear infinite;
+}
+
+.preloader__orbit circle {
+    fill: none;
+    stroke: #dc241c;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 0.18 0.07;
+    opacity: 0;
+    animation: preloader-fade 800ms ease 200ms forwards;
+}
+
+.preloader__crest {
+    position: relative;
+    width: 84%;
+    height: auto;
+    overflow: visible;
+}
+
+/* Glint that sweeps across the finished crest */
+.preloader__mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%) no-repeat;
+    background-size: 250% 100%;
+    background-position: 150% 0;
+    -webkit-mask: url("assets/images/brand/diocese-crest.svg") center / 84% auto no-repeat;
+    mask: url("assets/images/brand/diocese-crest.svg") center / 84% auto no-repeat;
+    animation: preloader-glint 900ms ease-in-out 1750ms forwards;
+    pointer-events: none;
+}
+
+/* 1. Shield outline draws, then the field fills */
+.preloader__crest .crest-shield-outline {
+    stroke: #ffffff;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: preloader-draw 900ms cubic-bezier(0.65, 0, 0.35, 1) 100ms forwards,
+               preloader-ink 400ms ease 1300ms forwards;
+}
+
+.preloader__crest .crest-shield-fill {
+    opacity: 0;
+    animation: preloader-fade 500ms ease 650ms forwards;
+}
+
+/* 2. Red saltire sweeps across */
+.preloader__crest .crest-saltire path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: preloader-draw 600ms cubic-bezier(0.65, 0, 0.35, 1) 900ms forwards;
+}
+
+.preloader__crest .crest-saltire path + path {
+    animation-delay: 1050ms;
+}
+
+/* 3. Central oval pops in */
+.preloader__crest .crest-oval {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0);
+    animation: preloader-pop 450ms cubic-bezier(0.34, 1.56, 0.64, 1) 1350ms forwards;
+}
+
+/* 4. Keys slide out from behind the shield */
+.preloader__crest .crest-key {
+    opacity: 0;
+    animation: preloader-key-left 700ms cubic-bezier(0.22, 0.61, 0.36, 1) 700ms forwards;
+}
+
+.preloader__crest .crest-key--right {
+    animation-name: preloader-key-right;
+}
+
+/* 5. Crown settles onto the shield */
+.preloader__crest .crest-crown {
+    opacity: 0;
+    transform: translateY(-36px);
+    animation: preloader-crown 700ms cubic-bezier(0.34, 1.3, 0.64, 1) 1100ms forwards;
+}
+
+/* --- Wordmark ----------------------------------------------------------- */
+
+.preloader__eyebrow,
+.preloader__title {
+    margin: 0;
+    opacity: 0;
+    animation: preloader-rise 700ms ease forwards;
+}
+
+.preloader__eyebrow {
+    margin-top: 1.5rem;
+    font-size: clamp(0.65rem, 2.6vw, 0.8rem);
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    animation-delay: 900ms;
+}
+
+.preloader__title {
+    margin-top: 0.25rem;
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: 0.35em;
+    margin-right: -0.35em; /* optically centre despite trailing letter-spacing */
+    text-transform: uppercase;
+    animation-name: preloader-rise-wide;
+    animation-delay: 1050ms;
+}
+
+.preloader__bar {
+    position: relative;
+    width: 120px;
+    height: 2px;
+    margin-top: 1.5rem;
+    border-radius: 2px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.preloader__bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #dc241c;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: preloader-progress 1.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* --- Keyframes ---------------------------------------------------------- */
+
+@keyframes preloader-draw     { to { stroke-dashoffset: 0; } }
+@keyframes preloader-ink      { to { stroke: #111111; } }
+@keyframes preloader-glint    { to { background-position: -50% 0; } }
+@keyframes preloader-crown    { to { opacity: 1; transform: none; } }
+
+@keyframes preloader-key-left {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes preloader-key-right {
+    from { opacity: 0; transform: translateX(-60px); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes preloader-fade     { to { opacity: 1; } }
+@keyframes preloader-pop      { to { transform: scale(1); } }
+@keyframes preloader-spin     { to { transform: rotate(360deg); } }
+@keyframes preloader-progress { to { transform: scaleX(1); } }
+
+@keyframes preloader-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes preloader-rise-wide {
+    from { opacity: 0; letter-spacing: 0.6em; }
+    to   { opacity: 1; letter-spacing: 0.35em; }
+}
+
+@keyframes preloader-timeout {
+    to { opacity: 0; visibility: hidden; }
+}
+
+/* Reduced motion: show the finished crest straight away, no drawing or spin */
+@media (prefers-reduced-motion: reduce) {
+    .preloader *,
+    .preloader *::after {
+        animation-duration: 1ms !important;
+        animation-delay: 0ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
